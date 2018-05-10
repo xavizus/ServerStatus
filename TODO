@@ -1,0 +1,22 @@
+ToDo:
+
+Redo the load of database.
+
+Instead of loading database in settings.class.php, create a load.php file that loads everything that's nessecery.
+Make the database function to load as a global class.
+
+Example of code to load the database:
+
+function require_wp_db() {
+	global $wpdb;
+
+	require_once( ABSPATH . WPINC . '/wp-db.php' );
+	if ( file_exists( WP_CONTENT_DIR . '/db.php' ) )
+		require_once( WP_CONTENT_DIR . '/db.php' );
+
+	if ( isset( $wpdb ) ) {
+		return;
+	}
+
+	$wpdb = new wpdb(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+}
