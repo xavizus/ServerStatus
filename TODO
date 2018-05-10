@@ -1,5 +1,7 @@
 ToDo:
 
+This is the test branch
+
 Redo the load of database.
 
 Instead of loading database in settings.class.php, create a load.php file that loads everything that's nessecery.
