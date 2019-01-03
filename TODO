@@ -1,7 +1,6 @@
 ToDo:
 
-This is now on Master Branch
-
+1.
 Redo the load of database.
 
 Instead of loading database in settings.class.php, create a load.php file that loads everything that's nessecery.
@@ -22,3 +21,5 @@ function require_wp_db() {
 
 	$wpdb = new wpdb(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
 }
+2.
+	Make a statisic function
