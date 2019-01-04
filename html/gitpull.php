@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 echo "This is a git pull runner!";
 if (preg_match("/192.168.2./i", $_SERVER['REMOTE_ADDR'])) {
 
-    exec("cd /var/repo/git-site && /usr/bin/git pull --no-ff --no-edit https://UserName:Password@git.xavizus.com/Bonobo.Git.Server/ServerStatus.git Development 2>&1",$result);
+    exec("cd /var/repo/git-site && /usr/bin/git pull --no-ff --no-edit -m \"Override current settings\" https://UserName:Password@git.xavizus.com/Bonobo.Git.Server/ServerStatus.git Development 2>&1",$result);
     echo "<pre>";
     foreach($result as $line) {
         print($line . "\n");
