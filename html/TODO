@@ -1,6 +1,7 @@
 ToDo:
 	☐  Remake the whole app with a new design philosophy: Factory pattern (Abstract Factory) and Dependency Injection
 		Read more about it at https://www.alainschlesser.com/singletons-shared-instances/
+		Read more about Dependency Injection @ http://fabien.potencier.org/what-is-dependency-injection.html
 	☐  Remake the database class.
 		Instead of loading database in settings.class.php, create a load.php file that loads everything that's nessecery.
 		Make the database function to load as a global class.
