@@ -1,6 +1,6 @@
 <?php
 echo "Git Pull!";
-$allow = array("192.168.2")
+$allow = array("192.168.2");
 if (in_array($_SERVER['REMOTE_ADDR'], $allow ) {
 
     exec("cd /var/repo/git-site && git pull --no-ff https://UserName:Password@git.xavizus.com/Bonobo.Git.Server/ServerStatus.git Development",$result);
