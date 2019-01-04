@@ -2,15 +2,15 @@
 	namespace ServerStatus;
 	Error_Reporting( E_ALL | E_STRICT );
 	Ini_Set( 'display_errors', true );
+	define ("ROOT_DIR", __DIR__ . "/../../",true);
 
 
 
 class Settings {
-
 	public $dbcon = NULL;
 	public $servers = NULL;
 	public $encryption = NULL;
-	
+
 	public function __construct ($filepath) {
 		try {
 			/*
