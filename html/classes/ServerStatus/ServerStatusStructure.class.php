@@ -17,7 +17,7 @@ class ServerStatusStructure {
 		/*
 		Load settings.
 		*/
-		$this->config = new Settings('Secret/config.ini');
+		$this->config = new Settings();
 	}
 
 	public function GetPrivateKey() {

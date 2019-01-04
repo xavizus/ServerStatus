@@ -10,13 +10,14 @@ class Settings {
 	public $servers = NULL;
 	public $encryption = NULL;
 
-	public function __construct ($filepath) {
+	public function __construct () {
 		try {
 			/*
 			Quick and dirty way to load an ini-file as an object instead of an array.
 			*/
 			//$ini_array = json_decode(json_encode(parse_ini_file("/opt/Secrets/config.ini",TRUE, INI_SCANNER_TYPED))); //The second param. will include the sections as an array. Then the json_encode and decode, make the array to a stdObj.
-			$ini_array = json_decode(json_encode(parse_ini_file(ROOT_DIR.$filepath,TRUE, INI_SCANNER_TYPED)));
+			$filepath = ROOT_DIR.'Secret/config.ini';
+			$ini_array = json_decode(json_encode(parse_ini_file($filepath,TRUE, INI_SCANNER_TYPED)));
 		}
 		catch (Exception $e) {
 			$e->getMessage();
