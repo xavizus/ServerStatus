@@ -12,5 +12,5 @@ function autoload($className) {
 	spl_autoload_register('autoload');
 	$SS = new ServerStatus\ServerStatusStructure();
 
-	printf(__DIR__);
+	//printf(__DIR__);
 ?>
