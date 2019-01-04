@@ -1,5 +1,7 @@
 ToDo:
-	? Remake the database class.
+	☐  Remake the whole app with a new design philosophy: Factory pattern (Abstract Factory) and Dependency Injection
+		Read more about it at https://www.alainschlesser.com/singletons-shared-instances/
+	☐  Remake the database class.
 		Instead of loading database in settings.class.php, create a load.php file that loads everything that's nessecery.
 		Make the database function to load as a global class.
 		Example of code to load the database
@@ -18,4 +20,4 @@ ToDo:
 			$wpdb = new wpdb(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
 		}
 
-	? Log statics of players online.
+	 ☐ Log statics of players online.
