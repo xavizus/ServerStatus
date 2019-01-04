@@ -14,5 +14,4 @@ function autoload($className) {
 
 	printf(APPLICATION_DIR);
 
-	
 ?>
