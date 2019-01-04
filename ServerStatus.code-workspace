@@ -4,5 +4,7 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"php.validate.executablePath": "C:/Program Files/PHP/php-7.3.0-Win32-VC15-x64/php.exe"
+	}
 }
