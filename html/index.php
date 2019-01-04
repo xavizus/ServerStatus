@@ -41,7 +41,7 @@ $servers = array(
 <body>
 	<div class="container">
 		<div class="row" style="margin:15px 0;">
-			<h1>Xavizus Server Status Devops</h1>
+			<h1>Xavizus Server Status Development</h1>
 			<p>This is a basic implementation of reading server meta and online/offline status.</p>
 		</div>
 		<div class="row">
