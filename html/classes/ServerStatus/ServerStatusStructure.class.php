@@ -17,7 +17,7 @@ class ServerStatusStructure {
 		/*
 		Load settings.
 		*/
-		$this->config = new Settings('/opt/Secrets/config.ini');
+		$this->config = new Settings('/var/www/xav-p-dev01.xavizus.com/Secrets/config.ini');
 	}
 
 	public function GetPrivateKey() {
