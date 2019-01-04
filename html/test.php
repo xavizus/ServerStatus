@@ -13,5 +13,4 @@ function autoload($className) {
 	$SS = new ServerStatus\ServerStatusStructure();
 
 	printf(APPLICATION_DIR);
-
 ?>
