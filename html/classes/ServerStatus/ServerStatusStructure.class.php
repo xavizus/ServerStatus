@@ -17,7 +17,6 @@ class ServerStatusStructure {
 		/*
 		Load settings.
 		*/
-		printf(ROOT_DIR);
 		$this->config = new Settings('Secret/config.ini');
 	}
 
