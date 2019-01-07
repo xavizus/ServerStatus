@@ -59,7 +59,7 @@ class MinecraftPing
 	public function Connect( )
 	{
 		$connectTimeout = $this->Timeout;
-		$this->Socket = @fsockopen( $this->ServerAddress, $this->ServerPort, $errno, $errstr, $connectTimeout );
+		$this->Socket = @fsockopen( $this->ServerAddress, $this->ServerPort, $errno, $errstr, $connectTimeout);
 		if( !$this->Socket )
 		{
 			$this->connected = false;
@@ -184,7 +184,7 @@ class MinecraftPing
 		{
 			return;
 		}
-		$Record = dns_get_record( '_minecraft._tcp.' . $this->ServerAddress, DNS_SRV );
+		$Record = dns_get_record( '_minecraft._tcp.' . $this->ServerAddress, DNS_SRV);
 		if( empty( $Record ) )
 		{
 			return;
