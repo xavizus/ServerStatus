@@ -43,7 +43,7 @@ class TeamSpeak3_Transport_UDP extends TeamSpeak3_Transport_Abstract
 
     $address = "udp://" . (strstr($host, ":") !== FALSE ? "[" . $host . "]" : $host) . ":" . $port;
     $timeout = (int) $this->config["timeout"];
-
+    
     $this->stream = @stream_socket_client($address, $errno, $errstr, $timeout);
 
     if($this->stream === FALSE)

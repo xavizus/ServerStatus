@@ -44,7 +44,6 @@ class TeamSpeak3_Transport_TCP extends TeamSpeak3_Transport_Abstract
     $address = "tcp://" . (strstr($host, ":") !== FALSE ? "[" . $host . "]" : $host) . ":" . $port;
     $options = empty($this->config["tls"]) ? array() : array("ssl" => array("allow_self_signed" => TRUE, "verify_peer" => FALSE, "verify_peer_name" => FALSE));
     $timeout = (int) $this->config["timeout"];
-
     $this->stream = @stream_socket_client($address, $errno, $errstr, $timeout, STREAM_CLIENT_CONNECT, stream_context_create($options));
 
     if($this->stream === FALSE)
