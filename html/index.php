@@ -5,7 +5,7 @@ function autoload($className) {
 	$className = str_replace('\\', '/', $className);
 	require(__DIR__ . '/classes/'.$className. '.class.php');
 	//printf(__DIR__ . '/classes/'.$className. '.class.php');
-	require_once(__DIR__.'/classes/TeamSpeak3/TeamSpeak3.php'); //Teamspeak 3 Framework
+	//require_once(__DIR__.'/classes/TeamSpeak3/TeamSpeak3.php'); //Teamspeak 3 Framework
 }
 
 	Error_Reporting( E_ALL | E_STRICT );
@@ -31,6 +31,7 @@ $servers = array(
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
 	<style>tr td,tr th {text-align:center !important}tr td.motd,tr th.motd{text-align:left !important;}</style>
 	<style>.status{width:50px;}</style>
+	<style>.serverType{width:50px}</style>
 	<!-- HTML5 shim -->
     <!--[if lt IE 9]>
     	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -48,7 +49,8 @@ $servers = array(
 			<table class="table table-bordered table-striped">
 				<thead>
 					<tr>
-						<th class="status">Status</th>
+						<th class="serverType">ServerType</th>
+						<th class="status">Status<span class="badge badge-success"><i class="icon-ok icon-white"></i></span><span class="badge badge-important"><i class="icon-remove icon-white"></i></span></th>
 						<th class="motd">Server</th>
 						<th>Users Online</th>
 					</tr>
@@ -57,6 +59,9 @@ $servers = array(
 					<?php foreach($servers as $server): ?>
 					<?php $stats = new mcDataStructure($server); ?>
 					<tr>
+						<td>
+							<span class="serverType"></span>
+						</td>
 						<td>
 							<?php if($stats->get_online()): ?>
 							<span class="badge badge-success"><i class="icon-ok icon-white"></i></span>
