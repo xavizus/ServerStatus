@@ -1,14 +1,54 @@
 <?php
 namespace ServerTypes;
+/**
+ * @file
+ * @package ServerTypes
+ * @author Stephan Ljungros
+ */
+
+/**
+  * @class Minecraft
+  * @brief Provides possibiltiy to connect to a Minecraft server and retrive data.
+  */
 class Minecraft {
 
-    //File
+    /**
+     * Stores the socket connection
+     * @var fsockopen 
+     */
     private $fp;
+
+    /**
+     * Stores the Server address of the Minecraft server
+     * @var string
+     */
     private $ServerAddress;
+
+    /**
+     * Stores the port to the Minecraft server
+     * @var integer
+     */
     private $ServerPort;
+
+    /**
+     * Stores the timeout value
+     * @var integer
+     */
     private $Timeout;
+
+    /**
+     * Stores the connection status
+     * @var boolean
+     */
     private $connected = false;
 
+    /**
+     * Constructor for creating the connection to the Minecraft server and fetches data.
+     * @param string
+     * @param integer
+     * @param integer
+     * @param boolean
+     */
     public function __construct ($Address, $port = 25566, $Timeout = 1, $ResolveSRV = true) {
         $this->ServerAddress = $Address;
         $this->ServerPort = (int)$port;
@@ -23,6 +63,11 @@ class Minecraft {
         $this->openConnection();
     }
 
+    /**
+     * Opens a socket to the Minecraft server.
+     * @throws Exception
+     * @return boolean 
+     */
     private function openConnection() {
         //If we already are connected, why try to connect again?
         if(!$connected) {
@@ -57,12 +102,20 @@ class Minecraft {
         }
 
     }
-    //Close our connection.
+
+    /**
+     * Closes the socket stream
+     * @return void
+     */
     private function close(){
         fclose($this->fp);
     }
 
-    //Query to the Minecraftserver.
+    /**
+     * Sends a query to the Minecraft server and receive the response
+     * @throws Exception
+     * @return obj  
+     */
     public function query() {
 
         //Make sure that we are connected to the server.
@@ -113,9 +166,11 @@ class Minecraft {
 
         return $data;
     }
-
-    //This function fetches the port from an SRV-address.
-    private function ResolveSRV() {
+    /**
+     * Get's the serverport from the DNS SRV
+     * @return null
+     */
+     private function ResolveSRV() {
 
         //Make sure that the Server Address is an DNS and not an IP-Address.
         if( ip2long( $this->ServerAddress ) !== false )
@@ -131,9 +186,16 @@ class Minecraft {
         }
     }
 
-    //This whole function is copied from Minecraft wiki, with some modifications so it can be used with PHP.
-    //I don't fully comprehend this function, thy my comments may be incorrect.
-    //https://wiki.vg/Protocol#VarInt_and_VarLong
+    /**
+     * This whole function is copied from Minecraft wiki, with some modifications so it can be used with PHP.
+     * I don't fully comprehend this function, thy my comments may be incorrect.
+     * https://wiki.vg/Protocol#VarInt_and_VarLong
+     * 
+     * What it basically does is to read the 7 first bits and check at the 8:th bit if there are any more data incoming.
+     * @throws Exception
+     * @return byte
+     */
+    
     private function readVarInt() {
         $numRead = 0;
         $result = 0;
