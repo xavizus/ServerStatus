@@ -3,6 +3,9 @@ ToDo:
 		Read more about it at https://www.alainschlesser.com/singletons-shared-instances/
 		Read more about Dependency Injection @ http://fabien.potencier.org/what-is-dependency-injection.html
 
+	☐ Redo the presentation of data for Minecraft servertype class. 
+		Make it more look like the presentation from teampseak.php servertype class.
+
 	✔ Remove the frameworks that's downloaded and make them yourself. @done(19-01-08 19:16)
 		✔ Minecraft @done(19-01-07 23:16)
 		✔ Teamspeak3 @done(19-01-08 19:15)
