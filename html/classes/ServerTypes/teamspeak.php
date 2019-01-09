@@ -110,6 +110,7 @@ class Teamspeak3 {
      * @return null if nothing is found.
      */
     public function __get($arg) {
+        $html = '';
         if($arg == "help") {
             foreach($this->data as $key => $value) {
                 $html .= "$key => $value </br>";
@@ -279,7 +280,8 @@ class Teamspeak3 {
         //seperates $keys and $values and store then as an array.
         for($i = 0; $i < count($table);$i++) {
             foreach($table[$i] as $pair) {
-                list($ident, $value) = explode("=",$pair,2);
+                
+                list($ident, $value) = array_pad(explode("=",$pair),2,null);
 
                 //This long line does mutliple things.
                 //Fist: Store the $key as multidimensional array and make sure to replease all escape characters from Teamspeak 3 query to normal characters.

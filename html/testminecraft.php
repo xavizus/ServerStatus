@@ -1,14 +1,60 @@
 <?php
-namespace ServerStatus;
+namespace ServerTypes;
+/**
+ * @file
+ * @package ServerTypes
+ * @author Stephan Ljungros
+ */
+
+/**
+  * @class Minecraft
+  * @brief Provides possibiltiy to connect to a Minecraft server and retrive data.
+  */
 class Minecraft {
 
-    //File
+    /**
+     * Stores the socket connection
+     * @var fsockopen 
+     */
     private $fp;
+
+    /**
+     * Stores the Server address of the Minecraft server
+     * @var string
+     */
     private $ServerAddress;
+
+    /**
+     * Stores the port to the Minecraft server
+     * @var integer
+     */
     private $ServerPort;
+
+    /**
+     * Stores the timeout value
+     * @var integer
+     */
     private $Timeout;
+
+    /**
+     * Stores the connection status
+     * @var boolean
+     */
     private $connected = false;
 
+    /**
+     * Stores the data information
+     * @var object
+     */
+    private $data;
+
+    /**
+     * Constructor for creating the connection to the Minecraft server and fetches data.
+     * @param string
+     * @param integer
+     * @param integer
+     * @param boolean
+     */
     public function __construct ($Address, $port = 25566, $Timeout = 1, $ResolveSRV = true) {
         $this->ServerAddress = $Address;
         $this->ServerPort = (int)$port;
@@ -20,12 +66,87 @@ class Minecraft {
         }
 
         //Open the connection to the server.
-        $this->openConnection();
+        $connection = $this->openConnection();
+
+        //did the connection work?
+        if(!$this->connected) {
+            throw new \Exception($connection->getMessage());
+        }
+
+        //Then run the query to the server. 
+        $data = $this->query();
+
+        var_dump($data);
+
+        //Format the data we recieved from the server.
+        $this->formatData($data);
     }
 
+    /**
+     * Gets unknown argument and try to find something that matches.
+     * @param string $arg 
+     * @return string html-tag if $arg == 'help'
+     * @return string $this->data->$arg Value
+     * @return null if nothing is found.
+     */
+    public function __get($arg) {
+        $html = '';
+        if($arg == 'help') {
+            foreach($this->data as $key => $value) {
+                switch($key) {
+                    case "description":
+                        $html .= $key ." => MOTD";
+                        break;
+                    case "maxclients":
+                        $html .= $key ." => Max allowed online players";
+                        break;
+                    case "clientsonline":
+                        $html .= $key ." => Current online players";
+                        break;
+                    case "version":
+                        $html .= $key ." => Minecraft version of the server";
+                        break;
+                    case "modList":
+                        $html .= $key ." => Current Minecraft mods. Returned as an object. 
+                        Access \"\$data->modList->modid\" for the mod name and, 
+                        \"\$data->modList->version\" for the mod version.";
+                    default:
+                        break;
+                }
+                $html .= "<br/>";
+            }
+            return $html;
+        }
+        else {
+            return array_key_exists($arg,$this->data) ? $this->data->$arg : null;
+        }
+    }
+
+    /**
+     * Format the data which make it easier for the programmer to access it.
+     * @param object
+     * @return void
+     */
+    private function formatData($data) {
+        $newFormat = new \stdClass();
+        $newFormat->description = $data->description->text;
+        $newFormat->maxclients = $data->players->max;
+        $newFormat->clientsonline = $data->players->online;
+        $newFormat->version = $data->version->name;
+        $newFormat->modList = $data->modinfo->modList;
+
+        $this->data = $newFormat;
+    }
+
+    /**
+     * Opens a socket to the Minecraft server.
+     * @throws Exception
+     * @return boolean 
+     * @return Exception if failed.
+     */
     private function openConnection() {
         //If we already are connected, why try to connect again?
-        if(!$connected) {
+        if(!$this->connected) {
             try {
                 //Open connection the the server.
                 $this->fp = @fsockopen( $this->ServerAddress, $this->ServerPort, $errno, $errstr, $this->Timeout );
@@ -36,8 +157,7 @@ class Minecraft {
                 }
             }
             catch(\Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "<br/>";
-                return false;
+                return $e;
             }
 
             //the fsockopen funciton just timesout while connecting to the socket.
@@ -57,13 +177,21 @@ class Minecraft {
         }
 
     }
-    //Close our connection.
+
+    /**
+     * Closes the socket stream
+     * @return void
+     */
     private function close(){
         fclose($this->fp);
     }
 
-    //Query to the Minecraftserver.
-    public function query() {
+    /**
+     * Sends a query to the Minecraft server and receive the response
+     * @throws Exception
+     * @return obj  
+     */
+    private function query() {
 
         //Make sure that we are connected to the server.
         if(!$this->connected) {
@@ -98,9 +226,14 @@ class Minecraft {
 
         //Get the lenght of the whole response.
         $length = $this->readVarInt();
+        
+        $data = '';
 
-        //Save the response
-        $data = fread($this->fp, $length);
+        //read the response
+        while (strlen($data) < $length) {
+            $buffer = fread($this->fp, 2048);
+            $data .= $buffer;
+        }
 
         //Close the connection
         $this->close();
@@ -113,9 +246,11 @@ class Minecraft {
 
         return $data;
     }
-
-    //This function fetches the port from an SRV-address.
-    private function ResolveSRV() {
+    /**
+     * Get's the serverport from the DNS SRV
+     * @return null
+     */
+     private function ResolveSRV() {
 
         //Make sure that the Server Address is an DNS and not an IP-Address.
         if( ip2long( $this->ServerAddress ) !== false )
@@ -131,9 +266,16 @@ class Minecraft {
         }
     }
 
-    //This whole function is copied from Minecraft wiki, with some modifications so it can be used with PHP.
-    //I don't fully comprehend this function, thy my comments may be incorrect.
-    //https://wiki.vg/Protocol#VarInt_and_VarLong
+    /**
+     * This whole function is copied from Minecraft wiki, with some modifications so it can be used with PHP.
+     * I don't fully comprehend this function, thy my comments may be incorrect.
+     * https://wiki.vg/Protocol#VarInt_and_VarLong
+     * 
+     * What it basically does is to read the 7 first bits and check at the 8:th bit if there are any more data incoming.
+     * @throws Exception
+     * @return byte
+     */
+    
     private function readVarInt() {
         $numRead = 0;
         $result = 0;
@@ -167,12 +309,12 @@ class Minecraft {
     }
 }
 
-$minecraft = new Minecraft('minecraft2.xavizus.com');
 try {
-    //$minecraft->query();
+    $minecraft = new Minecraft('minecraft2.xavizus.com');
+
+    echo $minecraft->help;
 }
 catch (\Exception $e) {
     echo 'Caught exception: ', $e->getMessage(), "<br/>";
 }
-
 ?>
