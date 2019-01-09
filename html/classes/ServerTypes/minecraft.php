@@ -55,7 +55,7 @@ class Minecraft {
      * @param integer
      * @param boolean
      */
-    public function __construct ($Address, $port = 25566, $Timeout = 1, $ResolveSRV = true) {
+    public function __construct ($Address, $port = 25565, $Timeout = 1, $ResolveSRV = true) {
         $this->ServerAddress = $Address;
         $this->ServerPort = (int)$port;
         $this->Timeout = $Timeout;
@@ -81,7 +81,7 @@ class Minecraft {
     }
 
     /**
-     * Gets unknown argument and try to find something that matches.
+     * Gets magic argument and try to find something that matches in this class.
      * @param string $arg 
      * @return string html-tag if $arg == 'help'
      * @return string $this->data->$arg Value
