@@ -43,6 +43,12 @@ class Minecraft {
     private $connected = false;
 
     /**
+     * Stores the data information
+     * @var object
+     */
+    private $data;
+
+    /**
      * Constructor for creating the connection to the Minecraft server and fetches data.
      * @param string
      * @param integer
@@ -60,7 +66,74 @@ class Minecraft {
         }
 
         //Open the connection to the server.
-        $this->openConnection();
+        $connection = $this->openConnection();
+
+        //did the connection work?
+        if(!$this->connected) {
+            throw new \Exception($connection->getMessage());
+        }
+
+        //Then run the query to the server. 
+        $data = $this->query();
+
+        //Format the data we recieved from the server.
+        $this->formatData($data);
+    }
+
+    /**
+     * Gets unknown argument and try to find something that matches.
+     * @param string $arg 
+     * @return string html-tag if $arg == 'help'
+     * @return string $this->data->$arg Value
+     * @return null if nothing is found.
+     */
+    public function __get($arg) {
+        $html = '';
+        if($arg == 'help') {
+            foreach($this->data as $key => $value) {
+                switch($key) {
+                    case "description":
+                        $html .= $key ." => MOTD";
+                        break;
+                    case "maxclients":
+                        $html .= $key ." => Max allowed online players";
+                        break;
+                    case "clientsonline":
+                        $html .= $key ." => Current online players";
+                        break;
+                    case "version":
+                        $html .= $key ." => Minecraft version of the server";
+                        break;
+                    case "modList":
+                        $html .= $key ." => Current Minecraft mods. Returned as an object. 
+                        Access \"\$data->modList->modid\" for the mod name and, 
+                        \"\$data->modList->version\" for the mod version.";
+                    default:
+                        break;
+                }
+                $html .= "<br/>";
+            }
+            return $html;
+        }
+        else {
+            return array_key_exists($arg,$this->data) ? $this->data->$arg : null;
+        }
+    }
+
+    /**
+     * Format the data which make it easier for the programmer to access it.
+     * @param object
+     * @return void
+     */
+    private function formatData($data) {
+        $newFormat = new \stdClass();
+        $newFormat->description = $data->description->text;
+        $newFormat->maxclients = $data->players->max;
+        $newFormat->clientsonline = $data->players->online;
+        $newFormat->version = $data->version->name;
+        $newFormat->modList = $data->modinfo->modList;
+
+        $this->data = $newFormat;
     }
 
     /**
@@ -81,8 +154,7 @@ class Minecraft {
                 }
             }
             catch(\Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "<br/>";
-                return false;
+                return $e;
             }
 
             //the fsockopen funciton just timesout while connecting to the socket.
@@ -152,8 +224,13 @@ class Minecraft {
         //Get the lenght of the whole response.
         $length = $this->readVarInt();
 
-        //Save the response
-        $data = fread($this->fp, $length);
+        $data = '';
+
+        //read the response
+        while (strlen($data) < $length) {
+            $buffer = fread($this->fp, 2048);
+            $data .= $buffer;
+        }
 
         //Close the connection
         $this->close();
