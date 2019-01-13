@@ -68,7 +68,7 @@
         }
 
         public function Factory() {
-            $ClassToLoad = __NAMESPACE__.'\\'.$this->serverType;
+            $ClassToLoad = __NAMESPACE__.'//'.$this->serverType;
 
             switch ($this->serverType) {
                 case "Teamspeak3":
