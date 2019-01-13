@@ -12,6 +12,8 @@ namespace ServerTypes;
   */
 class Minecraft {
 
+    private $serverType = "Minecraft";
+
     /**
      * Stores the socket connection
      * @var fsockopen 
@@ -48,6 +50,10 @@ class Minecraft {
      */
     private $data;
 
+    private $isOnline = FALSE;
+
+    public $err;
+
     /**
      * Constructor for creating the connection to the Minecraft server and fetches data.
      * @param string
@@ -55,7 +61,17 @@ class Minecraft {
      * @param integer
      * @param boolean
      */
-    public function __construct ($Address, $port = 25565, $Timeout = 1, $ResolveSRV = true) {
+    public function __construct ($Address, $port = NULL, $Timeout = NULL, $ResolveSRV = NULL) {
+        if($port == NULL) {
+            $port = 25565;
+        }
+        if($Timeout == NULL) {
+            $Timeout = 1;
+        }
+        if($ResolveSRV == NULL) {
+            $ResolveSRV = TRUE;
+        }
+
         $this->ServerAddress = $Address;
         $this->ServerPort = (int)$port;
         $this->Timeout = $Timeout;
@@ -70,7 +86,8 @@ class Minecraft {
 
         //did the connection work?
         if(!$this->connected) {
-            throw new \Exception($connection->getMessage());
+            $this->isOnline = FALSE;
+            return;
         }
 
         //Then run the query to the server. 
@@ -90,8 +107,13 @@ class Minecraft {
     public function __get($arg) {
         $html = '';
         if($arg == 'help') {
+
+            if($this->isOnline) {
             foreach($this->data as $key => $value) {
                 switch($key) {
+                    case "isOnline":
+                        $html .= $key ."=> Is the server online";
+                        break;
                     case "description":
                         $html .= $key ." => MOTD";
                         break;
@@ -113,10 +135,21 @@ class Minecraft {
                 }
                 $html .= "<br/>";
             }
+        }
+        else {
+            $html .= "isOnline => Is the server online </br>";
+        }
             return $html;
         }
         else {
-            return array_key_exists($arg,$this->data) ? $this->data->$arg : null;
+            if(@array_key_exists($arg,$this->data)) {
+                return $this->data->$arg;
+            }elseif(isset($this->$arg)) {
+                return $this->$arg;
+            }
+            else {
+                return NULL;
+            }
         }
     }
 
@@ -143,18 +176,20 @@ class Minecraft {
      */
     private function openConnection() {
         //If we already are connected, why try to connect again?
-        if(!$connected) {
+        if(!$this->connected) {
             try {
                 //Open connection the the server.
                 $this->fp = @fsockopen( $this->ServerAddress, $this->ServerPort, $errno, $errstr, $this->Timeout );
 
                 //Throw an Exception if the connection were not made.
                 if(!$this->fp) {
-                    throw new \Exception ("$errno: $errstr");
+                    $this->err = "$errno: $errstr";
+                    throw new \Exception($this->err);
                 }
             }
             catch(\Exception $e) {
-                return $e;
+                $this->err = $e->getMessage();
+                return false;
             }
 
             //the fsockopen funciton just timesout while connecting to the socket.
@@ -240,7 +275,7 @@ class Minecraft {
         
         //Decode the JSON so we can work with the data.
         $data = json_decode($data);
-
+        $this->isOnline = TRUE;
         return $data;
     }
     /**

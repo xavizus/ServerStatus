@@ -1489,6 +1489,22 @@ table .span24 {
     *margin-left: 0
 }
 
+.Minecraft-Icon {
+    display:inline-block;
+    width: 32px;
+    height: 32px;
+    background-image: url("../img/logos/minecraft-1.svg");
+    background-size: 32px 32px;
+}
+
+.Teamspeak3-Icon {
+    display:inline-block;
+    width: 32px;
+    height: 32px;
+    background-image: url("../img/logos/teamspeak3.svg");
+    background-size: 32px 32px;
+}
+
 .icon-white {
     background-image: url("../img/glyphicons-halflings-white.png")
 }
