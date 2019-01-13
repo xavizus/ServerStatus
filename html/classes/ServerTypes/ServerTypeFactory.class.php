@@ -68,7 +68,7 @@
         }
 
         public function Factory() {
-            $ClassToLoad = __NAMESPACE__.'//'.$this->serverType;
+            $ClassToLoad = __NAMESPACE__.'\\'.$this->serverType;
 
             switch ($this->serverType) {
                 case "Teamspeak3":
@@ -98,7 +98,7 @@
                 return;
             }
             $className = str_replace('\\', '/', $className);
-            $file = __DIR__ . '\\'.$className. '.class.php';
+            $file = __DIR__ . '/'.$className. '.class.php';
             if(!file_exists($file) || !is_readable($file)) {
                 throw new \Exception("The file $file does not exsist or is note readable");
             }
