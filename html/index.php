@@ -54,7 +54,7 @@ $servers = array(
 				</thead>
 				<tbody>
 					<?php foreach($servers as $server): ?>
-					<?php $stats = new ServerTypes\serverTypeFactory($server); ?>
+					<?php $stats = new ServerTypes\ServerTypeFactory($server); ?>
 					<?php $stats = $stats->Factory();?>
 					<tr>
 						<td>
