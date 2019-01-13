@@ -12,6 +12,8 @@ namespace ServerTypes;
   */
 class Teamspeak3 {
 
+    private $serverType = "Teamspeak3";
+
     /**
      * Stores the escape patterns for some text that the Teamspeak 3 server may return
      * 
@@ -73,12 +75,16 @@ class Teamspeak3 {
      * @var boolean
      */
     private $Connected = FALSE;
+
+    private $isOnline = FALSE;
     /**
      * Stores the recived data from the Teamspeak 3 queryserver
      * @var object if the connection is sucessfull
      * @var array if the connection was not sucessfull
      */
     private $data;
+
+    public $err;
 
     /**
      * Constructer for fetching data from a Teamspeak 3 server by the serverquery.
@@ -92,14 +98,28 @@ class Teamspeak3 {
      * @return Teamspeak3
      */
 
-    public function __construct($ServerAddress, $Username, $Password, $voicePort = 9987, $ServerQueryPort = 10011, $Timeout = 10) {
+    public function __construct($ServerAddress, $Username, $Password, $voicePort = NULL, $ServerQueryPort = NULL, $Timeout = NULL) {
+        if($voicePort == NULL) {
+            $voicePort = 9987;
+        }
+        if($ServerQueryPort == NULL) {
+            $ServerQueryPort = 10011;
+        }
+        if($Timeout == NULL) {
+            $Timeout = 10;
+        }
+
+        if($ServerAddress == NULL || $Username == NULL || $Password == NULL) {
+            throw new \Exception("You supplied wrong Serveraddress, Username or Password");
+        }
         $this->voicePort = (int)$voicePort;
         $this->Username = $Username;
         $this->Password = $Password;
         $this->ServerAddress = $ServerAddress;
         $this->ServerPort = (int)$ServerQueryPort;
         $this->Timeout = (int)$Timeout;
-        $this->Query();
+        
+        $this->isOnline = $this->Query();
     }
 
     /**
@@ -112,14 +132,25 @@ class Teamspeak3 {
     public function __get($arg) {
         $html = '';
         if($arg == "help") {
-            foreach($this->data as $key => $value) {
-                $html .= "$key => $value </br>";
+            if($this->isOnline) {
+                foreach($this->data as $key => $value) {
+                    $html .= "$key => $value </br>";
+                }
+            }
+            else {
+                $html .= "isOnline => Is the server online </br>";
             }
             return $html;
         }
         else {
-            return array_key_exists($arg,$this->data) ? $this->data->$arg : null;
-
+            if(array_key_exists($arg,$this->data)) {
+                return $this->data->$arg;
+            }elseif(isset($this->$arg)) {
+                return $this->$arg;
+            }
+            else {
+                return NULL;
+            }
         }    
     }
 
@@ -169,7 +200,7 @@ class Teamspeak3 {
                 $options = array();
                 $this->fp = @stream_socket_client($Address,$errno,$errstr,$this->Timeout, STREAM_CLIENT_CONNECT, stream_context_create($options));
                 if($this->fp === FALSE) {
-                    throw new \Exception ("$errno: ".utf8_encode($errstr));
+                    throw new \Exception ("Line: ".__LINE__." Err: $errno: ".utf8_encode($errstr));
                 }
                 $this->Connected = TRUE;
             }
@@ -191,7 +222,8 @@ class Teamspeak3 {
     private function Query() {
         $return = $this->openConnection();
         if(!$this->Connected) {
-            throw new \Exception ($return->getMessage());
+            $this->err = $return->getMessage();
+            return FALSE;;
         }
 
         //This array contains the commands to run.
@@ -213,6 +245,8 @@ class Teamspeak3 {
             }
             
         }
+
+        return TRUE;
     }
 
     /**
@@ -222,6 +256,7 @@ class Teamspeak3 {
      */
     private function toObject(array $array) {
         $obj = new \stdClass();
+        $obj->isOnline = 'Returns if the server is online or not';
         foreach ($array as $key => $value) {
             $obj->$key = $value;
         }

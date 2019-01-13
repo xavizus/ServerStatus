@@ -1,6 +1,5 @@
 <?php
 
-	use mc\mcDataStructure;
 function autoload($className) {
 	$className = str_replace('\\', '/', $className);
 	require(__DIR__ . '/classes/'.$className. '.class.php');
@@ -12,14 +11,12 @@ function autoload($className) {
 	Ini_Set( 'display_errors', true );
 
 spl_autoload_register('autoload');
-$servers = array(
-	"minecraft1.xavizus.com",
-	"minecraft2.xavizus.com",
-	"minecraft3.xavizus.com",
-	"minecraft4.xavizus.com"
-);
 
-//$minecraftServer = new McDataStructure('minecraft1.xavizus.com');
+$servers = array(
+	"Minecraft://minecraft1.xavizus.com",
+	"Minecraft://minecraft2.xavizus.com",
+	"Teamspeak3://Xavizus:UiiyhKme@flickshot.xavizus.com/?Voice_port=9988"
+);
 
 ?>
 
@@ -50,33 +47,50 @@ $servers = array(
 				<thead>
 					<tr>
 						<th class="serverType">ServerType</th>
-						<th class="status">Status<span class="badge badge-success"><i class="icon-ok icon-white"></i></span><span class="badge badge-important"><i class="icon-remove icon-white"></i></span></th>
+						<th class="status">Status</th>
 						<th class="motd">Server</th>
 						<th>Users Online</th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php foreach($servers as $server): ?>
-					<?php $stats = new mcDataStructure($server); ?>
+					<?php $stats = new ServerTypes\serverTypeFactory($server); ?>
+					<?php $stats = $stats->Factory();?>
 					<tr>
 						<td>
-							<span class="serverType"></span>
+							<?php if($stats->serverType == "Minecraft"): ?>
+							<span class="Minecraft-Icon"></span>
+							<?php elseif($stats->serverType == "Teamspeak3"): ?>
+							<span class="Teamspeak3-Icon"></span>
+							<?php endif;?>
 						</td>
 						<td>
-							<?php if($stats->get_online()): ?>
+							<?php if($stats->isOnline): ?>
 							<span class="badge badge-success"><i class="icon-ok icon-white"></i></span>
 							<?php else: ?>
 							<span class="badge badge-important"><i class="icon-remove icon-white"></i></span>
 							<?php endif; ?>
 						</td>
 						<td class="motd">
-							<?php echo $stats->get_description(); ?> 
+							<?php if($stats->serverType == "Minecraft"): ?>
+							<?php echo $stats->description; ?> 
 							<code>
-								<?php echo $server; ?>
+								<?php echo $stats->ServerAddress; ?>
 							</code>
+							<?php elseif($stats->serverType == "Teamspeak3"): ?>
+							<?php echo $stats->virtualserver_name; ?>
+							<code>
+								<?php echo $stats->ServerAddress; ?>
+							</code>
+							<?php endif;?> 
 						</td>
 						<td>
-							<?php printf('%u/%u', $stats->get_onlineplayers(), $stats->get_maxplayers()); ?>
+							<?php if($stats->serverType == "Minecraft"): ?>
+							<?php printf('%u/%u', $stats->clientsonline, $stats->maxclients); ?>
+							<?php elseif($stats->serverType == "Teamspeak3"): ?>
+							<?php printf('%u/%u', $stats->virtualserver_clientsonline, $stats->virtualserver_maxclients); ?>
+							<?php endif;?>
+							
 						</td>
 					</tr>
 					<?php unset($stats); ?>
@@ -85,7 +99,6 @@ $servers = array(
 			</table>
 		</div>
 		<div class="row">
-			<p>This page is using PHP to check if Minecraft servers are online and query their listing information. <a href="https://github.com/xPaw/PHP-Minecraft-Query">Read more about xPaw's original PHP 5.5 implementation here.</a></p>
 		</div>
 		<canvas id="myChart" width="800" height="450"></canvas>
 		<script>

@@ -1,5 +1,5 @@
 <?php
-    namespace ServerType;
+    namespace ServerTypes;
 
     class serverTypeFactory {
 
@@ -63,19 +63,60 @@
          */
         public function __construct($uri) {
             self::init($uri);
-
-
+            self::loadClass($this->serverType);
+            self::nullify();
         }
 
-        protected function fetchServerInfo() {
-            
+        public function Factory() {
+            $ClassToLoad = __NAMESPACE__.'\\'.$this->serverType;
+
+            switch ($this->serverType) {
+                case "Teamspeak3":
+                    $obj = new $ClassToLoad($this->serverAddress,$this->userName,$this->password,$this->voice_port,$this->serverport,$this->timeout);
+                    break;
+                case "Minecraft":
+                    $obj = new $ClassToLoad($this->serverAddress,$this->serverport,$this->timeout, $this->resolve_dns);
+                    break;
+                default:
+                    throw new \Exception("Could not load the class: ".$this->serverType);
+                    break;
+            }
+
+            return $obj;
+        }
+
+        protected function nullify() {
+            foreach ($this as $key => $item) {
+                if($item == "") {
+                    $this->$key = NULL;
+                }
+            }
+        }
+
+        protected function loadClass($className) {
+            if(class_exists($className, FALSE)) {
+                return;
+            }
+            $className = str_replace('\\', '/', $className);
+            $file = __DIR__ . '\\classes\\ServerTypes\\'.$className. '.class.php';
+            if(!file_exists($file) || !is_readable($file)) {
+                throw new \Exception("The file $file does not exsist or is note readable");
+            }
+
+            if(class_exists($className,FALSE)) {
+                throw new \Exception("The class: $className does not exist");
+            }
+
+            return include_once($file);
+
         }
         
         protected function init($uri) {
-            $uri = explode(":", strtolower(strval($uri)),2);
+            $uri = explode(":", strval($uri),2);
 
+            $uri[0] = strtolower($uri[0]);
             if(array_key_exists($uri[0],self::$validServerTypes)) {
-                $this->serverType = $uri[0];
+                $this->serverType = ucfirst($uri[0]);
                 
             } else {
                 throw new \Exception("ServerType is invalid. ServerType supplied: $uri[0]");
@@ -130,21 +171,25 @@
                         $this->$key = (strpos($value, "true") !== FALSE) ? TRUE : FALSE;
                     }
                     else {
-                        is_numeric($value) ? $this->$key = (int)$value : $this->$key = $value;
+                        is_numeric($value) ? $this->$key = (int)$value : $this->$key = trim($value);
                     }
                 }
                 else {
                     throw new \Exception("Option $key does not exist!");
                 }
-            } 
+            }
         }
     }
 
     try {
         //$test = new serverTypeFactory("Teamspeak3://username:xavizus@teamspeak.xavizus.com");
-        //$test = new serverTypeFactory("Teamspeak3://TestUser:TestPassword@teamspeak.xavizus.com:10011/?voice_port=9988&resolve_dns=false&timeout=10");
-        $test = new serverTypeFactory("Minecraft://minecraft2.xavizus.com/");
-        
+
+        $uri = "Teamspeak3://Xavizus:UiiyhKme@flickshot.xavizus.com/?Voice_port=9988";
+        $test = new serverTypeFactory($uri);
+        $test = $test->Factory();
+        $test2 = new serverTypeFactory("Minecraft://minecraft2.xavizus.com/");
+        $test2 = $test2->Factory();
+        var_dump($test->help);
     }
     catch(\Exception $e) {
         echo $e->getMessage();
