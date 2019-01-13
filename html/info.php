@@ -1,4 +1,4 @@
 <?php
-/**Test */
+/**Test Uppdated index.php*/
 phpinfo();
 ?>
