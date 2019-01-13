@@ -17,7 +17,8 @@ $servers = array(
 	"Minecraft://minecraft2.xavizus.com",
 	"Minecraft://minecraft3.xavizus.com",
 	"Minecraft://minecraft4.xavizus.com",
-	"Teamspeak3://Xavizus:UiiyhKme@flickshot.xavizus.com/?Voice_port=9988"
+	"Teamspeak3://Xavizus:UiiyhKme@flickshot.xavizus.com/?Voice_port=9988",
+	"Teamspeak3://Xavizus:zR8XLkoW@flodas.xavizus.com/"
 );
 
 ?>
