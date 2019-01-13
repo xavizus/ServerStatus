@@ -2,7 +2,7 @@
 
 function autoload($className) {
 	$className = str_replace('\\', '/', $className);
-	require(__DIR__ . '/classes/'.$className. '.class.php');
+	require(dirname(__FILE__) . '/classes/'.$className. '.class.php');
 	//printf(__DIR__ . '/classes/'.$className. '.class.php');
 	//require_once(__DIR__.'/classes/TeamSpeak3/TeamSpeak3.php'); //Teamspeak 3 Framework
 }
