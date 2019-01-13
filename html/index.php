@@ -15,6 +15,8 @@ spl_autoload_register('autoload');
 $servers = array(
 	"Minecraft://minecraft1.xavizus.com",
 	"Minecraft://minecraft2.xavizus.com",
+	"Minecraft://minecraft3.xavizus.com",
+	"Minecraft://minecraft4.xavizus.com",
 	"Teamspeak3://Xavizus:UiiyhKme@flickshot.xavizus.com/?Voice_port=9988"
 );
 
