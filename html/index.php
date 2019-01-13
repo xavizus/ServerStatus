@@ -36,6 +36,7 @@ $servers = array(
 	<script src="js/Chart.bundle.js"></script>
 </head>
 
+
 <body>
 	<div class="container">
 		<div class="row" style="margin:15px 0;">
