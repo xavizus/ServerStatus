@@ -109,16 +109,26 @@ $servers = array(
 		<script>
 var ctx = document.getElementById("myChart");
 var myChart = new Chart(ctx, {
-    type: 'bar',
+    type: 'line',
     data: {
         labels: ["2018-01-12 15:00", "2018-01-12 15:15", "2018-01-13 15:30", "2018-01-12 15:45", "2018-01-12 16:00", "2018-01-12 16:15", "2018-01-12 16:30", "2018-01-12 16:45", "2018-01-13 17:00", "2018-01-12 17:15", "2018-01-12 17:30", "2018-01-12 17:45"],
-        datasets: [{
+        datasets: [
+			{
+            label: '# players online Ts3 server',
+            data: [10, 25, 35, 23, 15, 10, 15, 1, 1, 2, 5, 9],
+			borderColor: 'rgba(51,102,153)',
+			borderWidth: 1,
+			fill: false,
+		},
+		{
             label: '# players online',
             data: [12, 19, 3, 5, 2, 3, 3, 4, 5, 4, 1, 7],
-			backgroundColor: 'rgba(63,127,191,1)',
-			borderColor: 'rgba(51,102,153,1)',
-            borderWidth: 1,
-        }]
+			borderColor: 'rgba(204, 0, 255)',
+			borderWidth: 1,
+			fill: false,
+		},
+	
+	]
     },
     options: {
         scales: {

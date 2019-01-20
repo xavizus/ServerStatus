@@ -10,3 +10,6 @@ ToDo:
 		✔ Minecraft @done(19-01-07 23:16)
 		✔ Teamspeak3 @done(19-01-08 19:15)
 	☐ Log statics of players online.
+		☐ Statistics shall be taken every 1 hour
+		☐ Statistics will be shown over a week of history.
+		☐ Another form, to show people online the last 30 days (Which shows top online people online each day).
