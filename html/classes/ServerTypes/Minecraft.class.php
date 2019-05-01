@@ -165,7 +165,11 @@ class Minecraft {
         $newFormat->maxclients = $data->players->max;
         $newFormat->clientsonline = $data->players->online;
         $newFormat->version = $data->version->name;
-        $newFormat->modList = $data->modinfo->modList;
+        if(isset($data->modinfo->modList)) {
+			$newFormat->modList = $data->modinfo->modList;
+		}else {
+			$newFormat->modList = FALSE;
+		}
 
         $this->data = $newFormat;
     }
@@ -271,8 +275,8 @@ class Minecraft {
         //Close the connection
         $this->close();
 
-        //Remove the 3 first nonsense characters
-        $data = substr($data,3);
+        //Remove the first nonsense characters untill { is encountered
+        $data = substr($data,strpos($data,'{'));
         
         //Decode the JSON so we can work with the data.
         $data = json_decode($data);
